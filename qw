@@ -1,0 +1,26 @@
+import requests
+from bs4 import BeautifulSoup
+
+url = "http://books.toscrape.com"
+
+print("Завантаження сторінки...")
+response = requests.get(url)
+
+if response.status_code == 200:
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    books = soup.find_all("article", class_="product_pod")
+
+    print("\nПерші 5 книг на сайті:")
+    print("-" * 40)
+
+    for index, book in enumerate(books[:5], start=1):
+        book_link = book.find("h3").find("a")
+
+        book_title = book_link.get("title")
+
+        print(f"{index}. {book_title}")
+
+    print("-" * 40)
+else:
+    print(f"Помилка завантаження сторінки. Код відповіді: {response.status_code}")
