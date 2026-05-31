@@ -1,0 +1,40 @@
+import sqlite3
+
+connection = sqlite3.connect("games.db")
+
+cursor = connection.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS my_games (
+    назва TEXT,
+    рік_випуску INTEGER,
+    оцінка REAL
+)
+""")
+
+favorite_games = [
+    ("The witcher 3: wild hunt", 2015, 9.8),
+    ("Life is strange 2", 2018, 8.5),
+    ("No, i'm not a human", 2025, 9.6)
+]
+
+cursor.executemany("""
+INSERT INTO my_games (назва, рік_випуску, оцінка) 
+VALUES (?, ?, ?)
+""", favorite_games)
+
+connection.commit()
+print("Дані успішно збережено в базі!\n")
+
+cursor.execute("SELECT назва, рік_випуску, оцінка FROM my_games")
+
+all_games = cursor.fetchall()
+
+print("Список моїх улюблених ігор:")
+print("-" * 50)
+for game in all_games:
+    name, year, rating = game
+    print(f"Гра: {name} | Рік випуску: {year} | Оцінка: {rating}/10")
+print("-" * 50)
+
+connection.close()
